@@ -1,0 +1,96 @@
+Requirements
+============
+- temperatuur meten
+- 2 verschillende temperatuur metingen
+- webinterface
+- inlezen van metingen
+- om de 5 minuten wordt de meting opgeslagen in de db
+
+============
+Documentatie
+============
+- onderzoeksverslag
+- functioneel ontwerp (x)
+- technisch ontwerp
+- inrichting ontwikkelomgeving document
+- reasitatie document
+- testplan
+- evaluatie document
+
+============
+Onderdelen
+(realisatie)
+============
+- 2 temperatuur sensoren
+- arduino (uno/duo?)
+- rasberry Pi 3B
+- pc
+
+
+=========
+Data base
+=========
+- measurements
+	- id (int, autoincremented, primary key)
+	- sensor_id (int)
+	- temperature_celsius (int)
+	- temperature_fahrenheit (int)
+	- date (Date)
+	- time (Time)
+
+
+========
+Notities
+========
+- maak de lijst gepagineerd
+- alle waarden zijn optioneel
+- tableView met adapter?
+
+=======
+Classes
+=======
+- ServiceTask
+	- cancel()
+- Measurement (model)
+	- id (int)
+	- sensorID (int)
+	- temperatureCelsius (int)
+	- temperatureFahrenheit (int)
+	- date (date/string)
+	- time (time/string)
+- LoadService
+	- fetch(range: Range, success: (List<Measurement>) -> {}) : ServiceTask
+- LoadUseCase
+	- ungoingServiceTasks (List<[range: ServiceTask]>)
+	- override deinit()
+	- service (LoadService)
+	- fetch(range: Range, success: (List<Measurement>) -> {})
+- SaveService
+	- save(measurement: Measurement, success: () -> {}, failure: () -> {}) : ServiceTask
+- SaveUseCase
+	- ungoingServiceTasks (List<ServiceTask>)
+	- override deinit()
+	- service (SaveService)
+	- save(measurement: Measurement, success: () -> {}, failure: () -> {})
+- DataStore
+	- useCase (LoadUseCase)
+	- storedList (List<Measurement>)
+	- getMeasurement(position: Int) : Measurement  //range = 5
+	- getCount() : Int
+- ViewController
+	- dataStore (DataStore)
+	- view (??)
+	- viewLoad()
+	- reloadTableView()
+	- setSensorOneText(text: String)
+	- setSensorTwoText(text: String)
+- TemperatureOutputController
+	- useCase (SaveUseCase)
+	- viewController (ViewController)
+	- currentMeasurementSensorOne (Measurement)
+	- currentMeasurementSensorTwo (Measurement)
+	- setDataFromSensorOne(rawData: ??)
+	- setDataFromSensorTwo(rawData: ??)
+	- saveAfterTime()   //aanroepen in init() na 5 min currents naar db
+- MainActivity
+	- start()
